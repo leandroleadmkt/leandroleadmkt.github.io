@@ -14,12 +14,29 @@
   <p>Redirecionando para o Instagram...</p>
   <script>
     var username = "leandroleadmkt";
-    var appLink  = "instagram://user?username=" + username;
-    var webLink  = "https://www.instagram.com/" + username + "/";
-    window.location.href = appLink;
-    setTimeout(function () {
-      window.location.href = webLink;
-    }, 1500);
+    var webUrl = "https://www.instagram.com/" + username + "/";
+    var iosUrl = "instagram://user?username=" + username;
+    var androidIntent = "intent://instagram.com/_u/" + username + "/#Intent;package=com.instagram.android;scheme=https;S.browser_fallback_url=" + encodeURIComponent(webUrl) + ";end";
+
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    var isAndroid = /android/i.test(userAgent);
+    var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+    if (isAndroid) {
+      window.location.replace(androidIntent);
+    } else if (isIOS) {
+      window.location.replace(iosUrl);
+      var time = Date.now();
+      setTimeout(function() {
+        var now = Date.now();
+        // If the app opened, the browser would be suspended and this would run much later.
+        if (now - time < 2500) {
+          window.location.replace(webUrl);
+        }
+      }, 2000);
+    } else {
+      window.location.replace(webUrl);
+    }
   </script>
 </body>
 </html>
